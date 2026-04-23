@@ -1,0 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.11.0+cpu
+faster-whisper==1.2.1
+yt-dlp==2026.3.17
+httpx[http2]==0.28.1
+python-dotenv==1.2.2
+aiogram==3.27.0

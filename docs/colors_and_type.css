@@ -1,0 +1,435 @@
+/* opencode — Design System Tokens
+ * Colors + Typography
+ * Berkeley Mono is proprietary (US$75). We substitute IBM Plex Mono from Google Fonts
+ * as the nearest open-source match. Replace if you have a Berkeley Mono license.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ============ COLORS ============ */
+
+  /* Primary — warm near-black / off-white */
+  --oc-dark:          #201d1d;  /* page bg, button fill, link text */
+  --oc-light:         #fdfcfc;  /* primary text on dark, button text */
+  --oc-mid:           #9a9898;  /* secondary text, muted links */
+
+  /* Secondary surfaces */
+  --oc-dark-elev:     #302c2c;  /* elevated surface on dark */
+  --oc-border-strong: #646262;  /* 1px solid outline */
+  --oc-light-elev:    #f1eeee;  /* light surface */
+  --oc-input-bg:      #f8f7f7;  /* input fill */
+
+  /* Accent — Apple system blue */
+  --oc-blue:          #007aff;
+  --oc-blue-hover:    #0056b3;
+  --oc-blue-active:   #004085;
+
+  /* Semantic — Apple HIG palette */
+  --oc-red:           #ff3b30;
+  --oc-red-hover:     #d70015;
+  --oc-red-active:    #a50011;
+
+  --oc-green:         #30d158;
+
+  --oc-orange:        #ff9f0a;
+  --oc-orange-hover:  #cc7f08;
+  --oc-orange-active: #995f06;
+
+  /* Text scale */
+  --oc-text-muted:    #6e6e73;
+  --oc-text-secondary:#424245;
+
+  /* Borders — warm transparent */
+  --oc-border:        rgba(15, 0, 0, 0.12);
+  --oc-border-tab:    #9a9898;
+
+  /* Semantic role mapping (dark theme default) */
+  --bg:               var(--oc-dark);
+  --bg-elev:          var(--oc-dark-elev);
+  --fg1:              var(--oc-light);      /* primary */
+  --fg2:              var(--oc-mid);        /* secondary */
+  --fg3:              var(--oc-text-muted); /* muted */
+  --border:           var(--oc-border);
+  --border-outline:   var(--oc-border-strong);
+  --accent:           var(--oc-blue);
+
+  /* ============ TYPOGRAPHY ============ */
+
+  --font-mono: 'Berkeley Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-display: var(--font-mono);
+  --font-body:    var(--font-mono);
+  --font-code:    var(--font-mono);
+
+  /* Sizes */
+  --text-h1:      38px;  /* 2.38rem */
+  --text-h2:      16px;
+  --text-body:    16px;
+  --text-caption: 14px;
+
+  /* Weights */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  /* Line heights */
+  --lh-tight:    1.0;
+  --lh-normal:   1.5;
+  --lh-relaxed:  2.0;
+
+  /* ============ SPACING (8px grid) ============ */
+  --space-0:  0;
+  --space-1:  1px;
+  --space-2:  2px;
+  --space-4:  4px;
+  --space-8:  8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+
+  /* ============ RADII ============ */
+  --radius-default: 4px;   /* buttons, containers, badges */
+  --radius-input:   6px;   /* form inputs only */
+
+  /* ============ CONTAINER ============ */
+  --content-width: 880px;
+
+  /* ============ MOTION ============ */
+  --dur-fast:   100ms;
+  --dur-normal: 150ms;
+  --ease:       linear;
+}
+
+/* ============ SEMANTIC TAG STYLES ============ */
+
+html, body {
+  background: var(--bg);
+  color: var(--fg1);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss01';
+}
+
+h1 {
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+h2 {
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+h3, h4, h5, h6 {
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+p {
+  font-size: var(--text-body);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  font-weight: var(--weight-medium);
+  transition: color var(--dur-normal) var(--ease);
+}
+a:hover { color: var(--oc-blue); }
+
+small, .caption {
+  font-size: var(--text-caption);
+  line-height: var(--lh-relaxed);
+  color: var(--fg2);
+}
+
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+  font-size: 1em;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-32) 0;
+}
+
+/* ============ BASE COMPONENT CLASSES ============ */
+
+.oc-btn {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-relaxed);
+  background: var(--oc-dark);
+  color: var(--oc-light);
+  border: 0;
+  border-radius: var(--radius-default);
+  padding: 4px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--dur-normal) var(--ease);
+}
+.oc-btn:hover { background: #302c2c; color: var(--oc-light); }
+
+.oc-btn--outline {
+  background: transparent;
+  color: var(--oc-light);
+  border: 1px solid var(--oc-border-strong);
+}
+.oc-btn--outline:hover { background: var(--oc-dark-elev); }
+
+.oc-input {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  background: var(--oc-input-bg);
+  color: var(--oc-dark);
+  border: 1px solid var(--oc-border);
+  border-radius: var(--radius-input);
+  padding: 20px;
+  outline: none;
+  transition: border-color var(--dur-normal) var(--ease);
+}
+.oc-input:focus { border-color: var(--oc-border-strong); }
+
+.oc-tab {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--oc-mid);
+  padding: var(--space-8) 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  cursor: pointer;
+}
+.oc-tab[aria-selected="true"],
+.oc-tab.is-active {
+  color: var(--oc-light);
+  border-bottom-color: var(--oc-border-tab);
+}
+
+.oc-link--muted { color: var(--oc-mid); text-decoration: none; }
+.oc-link--muted:hover { color: var(--oc-light); }
+
+/* ============ LIGHT THEME OVERRIDE ============ */
+[data-theme="light"] {
+  --bg:  var(--oc-light);
+  --bg-elev: var(--oc-light-elev);
+  --fg1: var(--oc-dark);
+  --fg2: var(--oc-text-secondary);
+  --fg3: var(--oc-text-muted);
+}
+
+/* ============ HERO PLATFORM ICONS ============
+ * Injected by index.html. Small inline SVGs preceding each service name.
+ */
+.pi {
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  vertical-align: -0.15em;
+  margin-right: 5px;
+}
+
+/* Footer tagline line break — desktop shows single line, mobile breaks cleanly. */
+.fbr { display: none; }
+@media (max-width: 640px) {
+  .fbr { display: inline; }
+  .fsep { display: none; }
+  /* Remove the margin-left:auto push on mobile — align tagline to the left edge. */
+  footer span[data-split="1"] {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* ============ TELEGRAM-BRANDED CTA ============
+ * Overrides the ghost-outline inline style on the hero/install Telegram button
+ * with Telegram's brand palette + paper-plane icon.
+ */
+a[href="https://t.me/ytsdownl_bot"] {
+  background: #229ED9 !important;
+  color: #fff !important;
+  border: 1px solid #229ED9 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+a[href="https://t.me/ytsdownl_bot"]:hover {
+  background: #1f8ebd !important;
+  border-color: #1f8ebd !important;
+}
+a[href="https://t.me/ytsdownl_bot"]::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'><path d='M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+}
+
+/* ============ MOBILE BURGER MENU ============
+ * Injected by index.html script. Hidden on desktop.
+ */
+.burger-btn {
+  display: none;
+  background: transparent;
+  color: #fdfcfc;
+  border: 1px solid rgba(253,252,252,0.2);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.burger-btn:hover { background: rgba(253,252,252,0.06); }
+
+.nav-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #201d1d;
+  border-bottom: 1px solid rgba(253,252,252,0.08);
+  padding: 16px 16px 20px;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 9;
+}
+.nav-panel a {
+  color: #fdfcfc !important;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 6px 0;
+}
+.nav-panel a:hover { color: #fdfcfc !important; opacity: 0.7; }
+
+body.nav-open .nav-panel {
+  display: flex;
+}
+
+/* ============ RESPONSIVE (mobile) ============
+ * Landing uses inline React styles — override with element selectors + !important.
+ */
+@media (max-width: 640px) {
+  /* Nav: hide 5 middle text links (burger menu replaces them) */
+  nav > div > div:last-child > a:not(:last-of-type) {
+    display: none !important;
+  }
+  /* Burger button — visible on mobile, sits between brand and Install CTA */
+  .burger-btn { display: inline-block !important; }
+  nav > div {
+    padding: 14px 16px !important;
+    gap: 12px !important;
+  }
+  nav > div > a > img {
+    height: 24px !important;
+  }
+  nav > div > a > span {
+    font-size: 13px !important;
+  }
+
+  /* Hero headline — scale down */
+  main h1 {
+    font-size: 38px !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.5px;
+  }
+
+  /* ASCII diagram (<pre>) — shrink font & padding */
+  pre {
+    font-size: 11px !important;
+    padding: 14px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Sections — compact vertical padding */
+  main section {
+    padding-top: 44px !important;
+    padding-bottom: 44px !important;
+  }
+
+  /* FAQ questions — smaller */
+  #faq li button {
+    font-size: 13.5px !important;
+    gap: 12px !important;
+  }
+  #faq li div {
+    font-size: 13.5px !important;
+  }
+
+  /* Perf table + HowItWorks steps — grid overflows → scroll */
+  #perf table,
+  #how ol {
+    font-size: 13px !important;
+  }
+
+  /* SectionHeading margin tightened */
+  main section h2 {
+    margin-bottom: 12px !important;
+  }
+
+  /* Center CTA button rows on mobile.
+   * Hero ("Развернуть на VPS" + "@ytsdownl_bot в Telegram") and
+   * Install ("Открыть на GitHub" + "Прочитать README"). */
+  #top > div:has(> a[href="#install"]),
+  #install div:has(> a[href^="https://github.com/xpressmike/ytr-downloader-bot"]) {
+    justify-content: center !important;
+  }
+
+  /* HowItWorks grid: desktop uses 60px / 180px / 1fr — too cramped on mobile.
+   * Shrink label and step-name columns; description gets the rest. */
+  #how ol li {
+    grid-template-columns: 28px 92px 1fr !important;
+    gap: 10px !important;
+    padding: 14px 0 !important;
+  }
+  #how ol li > span:nth-child(2),
+  #how ol li > span:nth-child(3) {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  main h1 {
+    font-size: 30px !important;
+  }
+  pre {
+    font-size: 10px !important;
+  }
+  nav > div > a > span {
+    font-size: 12px !important;
+  }
+}

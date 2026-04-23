@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>YTR BOT - Твой личный бот в Telegram для скачивания видео с YouTube, Instagram, TikTok, Twitter/X</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  html, body { margin: 0; background:#201d1d; color:#fdfcfc; }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  ::selection { background: #007aff; color: #fdfcfc; }
+  html { scroll-behavior: smooth; }
+  @media (max-width: 640px) {
+    .container { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="app.js" defer></script>
+<script>
+  // Mobile burger menu — injected after React renders the nav.
+  // Clones the 5 text links into a dropdown panel visible on <= 640px.
+  (function mobileNav() {
+    function init() {
+      var nav = document.querySelector('nav');
+      var linksDiv = nav && nav.querySelector('div > div:last-child');
+      if (!linksDiv) { return setTimeout(init, 50); }
+
+      var links = Array.prototype.slice.call(linksDiv.querySelectorAll('a'));
+      if (links.length < 2) { return; }
+      // Last <a> is the "Установить" CTA — keep it visible; clone the rest.
+      var cloneable = links.slice(0, -1);
+
+      var btn = document.createElement('button');
+      btn.className = 'burger-btn';
+      btn.setAttribute('aria-label', 'Меню');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.textContent = '☰';  // ☰
+
+      var panel = document.createElement('div');
+      panel.className = 'nav-panel';
+      cloneable.forEach(function(a) {
+        var link = a.cloneNode(true);
+        link.removeAttribute('style');  // drop inline color overrides
+        link.addEventListener('click', close);
+        panel.appendChild(link);
+      });
+
+      function open() {
+        document.body.classList.add('nav-open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+      function close() {
+        document.body.classList.remove('nav-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (document.body.classList.contains('nav-open')) close(); else open();
+      });
+      document.addEventListener('click', function(e) {
+        if (!panel.contains(e.target) && e.target !== btn) close();
+      });
+
+      // Burger goes AFTER Install CTA (right edge on mobile).
+      linksDiv.appendChild(btn);
+      nav.appendChild(panel);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 50); });
+    } else {
+      setTimeout(init, 50);
+    }
+  })();
+
+  // Platform brand icons — injected after React renders.
+  // Used in: hero subtitle <p>, demo tabs (youtube/instagram/tiktok/audio),
+  // performance table first column (YouTube Shorts / TikTok / Instagram Reel).
+  window.__platformIcons = {
+    'YouTube':   '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8 0 12 0 12s0 4 .5 5.8A3 3 0 0 0 2.6 20c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 16 24 12 24 12s0-4-.5-5.8zM9.5 15.6V8.4L15.8 12z"/></svg>',
+    'Instagram': '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#E4405F" d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-3.2 1.7-4.8 4.9-4.9 1.3-.1 1.6-.1 4.8-.1zM12 0C8.7 0 8.3 0 7 .1 2.7.3.3 2.7.1 7 0 8.3 0 8.7 0 12s0 3.7.1 5c.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24s3.7 0 5-.1c4.4-.2 6.8-2.6 7-7 0-1.3.1-1.7.1-5s0-3.7-.1-5C23.8 2.6 21.4.3 17 .1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg>',
+    'TikTok':    '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fdfcfc" d="M19.3 5.4a5.3 5.3 0 0 1-3.8-3V8.3a5.3 5.3 0 0 0 3 1.6v-4.5zM9.4 11.4a3.8 3.8 0 1 0 2.7 6.4c.7-.7 1.1-1.7 1.1-2.7V.9h3.8a5.3 5.3 0 0 0 1.8 4.4 5.3 5.3 0 0 0 3.2 1.3v3.8a9.1 9.1 0 0 1-5-1.5v6.2a7.6 7.6 0 1 1-7.6-7.6v3.9z"/></svg>',
+    'Twitter/X': '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fdfcfc" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+    'audio':     '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#30d158" d="M12 3v10.55A4 4 0 1 0 14 17V7h5V3h-7z"/></svg>',
+    'Telegram':  '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#229ED9" d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>'
+  };
+
+  (function heroIcons() {
+    var ICONS = window.__platformIcons;
+    var NAMES = ['YouTube', 'Instagram', 'TikTok', 'Twitter/X'];
+    function addIconsTo(el) {
+      if (!el || el.dataset.iconsAdded) return;
+      var html = el.innerHTML;
+      var changed = false;
+      NAMES.forEach(function(name) {
+        if (html.indexOf(name) > -1 && html.indexOf(ICONS[name]) === -1) {
+          html = html.split(name).join(ICONS[name] + name);
+          changed = true;
+        }
+      });
+      if (changed) el.innerHTML = html;
+      el.dataset.iconsAdded = '1';
+    }
+    function init() {
+      var heroP = document.querySelector('section#top p');
+      if (!heroP) { return setTimeout(init, 50); }
+      addIconsTo(heroP);
+      // Hero-only: add Telegram icon before the word "Telegram" in "Твой личный бот в Telegram:"
+      if (heroP.innerHTML.indexOf('Telegram:') > -1 && !heroP.dataset.tgAdded) {
+        heroP.innerHTML = heroP.innerHTML.replace('Telegram:', ICONS['Telegram'] + 'Telegram:');
+        heroP.dataset.tgAdded = '1';
+      }
+      // Feature-list descriptions (section#features) — each feature desc is in a span.
+      // Plus any leaf <div> in <main> that mentions a platform (WhatIs card descriptions).
+      var nodes = [];
+      document.querySelectorAll('section#features span').forEach(function(n) { nodes.push(n); });
+      document.querySelectorAll('main div').forEach(function(n) {
+        if (n.children.length === 0) nodes.push(n);  // leaf only
+      });
+      nodes.forEach(function(n) {
+        var t = n.textContent || '';
+        if (NAMES.some(function(name) { return t.indexOf(name) > -1; })) {
+          addIconsTo(n);
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 50); });
+    } else {
+      setTimeout(init, 50);
+    }
+  })();
+
+  // Footer tagline — add emoji icons before each word in "brain&hands&claude",
+  // space out the & separators, and split "· self-hosted 4ever" so it wraps
+  // cleanly on mobile instead of breaking mid-word.
+  (function footerBreak() {
+    function init() {
+      var spans = document.querySelectorAll('footer span');
+      spans.forEach(function(sp) {
+        if (sp.dataset.split) return;
+        var t = sp.textContent || '';
+        if (t.indexOf('built with') === 0 && t.indexOf('self-hosted 4ever') > -1) {
+          var html = t
+            .replace(
+              'brain&hands&claude',
+              '🧠 brain &amp; 🤲 hands &amp; ✨ claude'
+            )
+            .replace(
+              ' · self-hosted 4ever',
+              '<span class="fsep"> · </span><br class="fbr">self-hosted 4ever'
+            );
+          sp.innerHTML = html;
+          sp.dataset.split = '1';
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
+    } else {
+      setTimeout(init, 100);
+    }
+  })();
+
+  // Feature card titles (Сохранить / Обойти / Найти / Читать) get thematic icons.
+  (function featureIcons() {
+    var MAP = {
+      'Сохранить': '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#30d158" d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.83a2 2 0 0 0-.59-1.41l-3.83-3.83A2 2 0 0 0 15.17 2H5a2 2 0 0 0-2 1zM7 8h10V4H7v4zm5 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>',
+      'Обойти':    '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff9f0a" d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>',
+      'Найти':     '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#007aff" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>',
+      'Читать':    '<svg class="pi" viewBox="0 0 24 24" aria-hidden="true"><path fill="#af52de" d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 5.5v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.35 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V5.5c-.6-.45-1.25-.75-2-1zM21 18.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>'
+    };
+    function init() {
+      var divs = document.querySelectorAll('div');
+      var patched = 0;
+      divs.forEach(function(d) {
+        if (d.children.length !== 0) return;
+        var t = (d.textContent || '').trim();
+        if (MAP[t] && !d.dataset.iconAdded) {
+          d.insertAdjacentHTML('afterbegin', MAP[t]);
+          d.dataset.iconAdded = '1';
+          patched++;
+        }
+      });
+      if (patched < Object.keys(MAP).length) { return setTimeout(init, 80); }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 80); });
+    } else {
+      setTimeout(init, 80);
+    }
+  })();
+
+  // Tabs (youtube / instagram / tiktok / audio) + Perf table (YouTube Shorts /
+  // TikTok / Instagram Reel) get matching icons prepended.
+  (function tabsPerfIcons() {
+    var ICONS = window.__platformIcons;
+    var TAB_MAP = {
+      'youtube':   ICONS['YouTube'],
+      'instagram': ICONS['Instagram'],
+      'tiktok':    ICONS['TikTok'],
+      'audio':     ICONS['audio']
+    };
+    function initTabs() {
+      var hero = document.querySelector('section#top');
+      if (!hero) { return setTimeout(initTabs, 50); }
+      var btns = hero.querySelectorAll('button');
+      if (btns.length < 2) { return setTimeout(initTabs, 50); }
+      btns.forEach(function(b) {
+        var t = (b.textContent || '').trim();
+        if (TAB_MAP[t] && !b.dataset.iconAdded) {
+          b.insertAdjacentHTML('afterbegin', TAB_MAP[t]);
+          b.dataset.iconAdded = '1';
+        }
+      });
+    }
+    function initPerf() {
+      var rows = document.querySelectorAll('section#perf td span');
+      if (rows.length < 1) { return setTimeout(initPerf, 50); }
+      rows.forEach(function(sp) {
+        if (sp.dataset.iconAdded) return;
+        var t = (sp.textContent || '').trim();
+        var key = null;
+        if (t.indexOf('YouTube') === 0) key = 'YouTube';
+        else if (t.indexOf('TikTok') === 0) key = 'TikTok';
+        else if (t.indexOf('Instagram') === 0) key = 'Instagram';
+        if (key) {
+          sp.insertAdjacentHTML('afterbegin', ICONS[key]);
+          sp.dataset.iconAdded = '1';
+        }
+      });
+    }
+    function init() { initTabs(); initPerf(); }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 80); });
+    } else {
+      setTimeout(init, 80);
+    }
+  })();
+</script>
+</body>
+</html>

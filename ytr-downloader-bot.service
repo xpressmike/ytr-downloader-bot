@@ -1,0 +1,21 @@
+# Template: replace USERNAME with your system user before installing.
+# Quick way (uses your current login):
+#   sed "s|USERNAME|$USER|g" ytr-downloader-bot.service | sudo tee /etc/systemd/system/ytr-downloader-bot.service
+
+[Unit]
+Description=Video Archive Telegram Listener
+After=network-online.target whisper-worker.service
+Wants=network-online.target
+Requires=whisper-worker.service
+
+[Service]
+Type=simple
+User=USERNAME
+WorkingDirectory=/home/USERNAME/ytr-downloader-bot
+Environment="PATH=/home/USERNAME/ytr-downloader-bot/.venv/bin:/home/USERNAME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/home/USERNAME/ytr-downloader-bot/.venv/bin/python /home/USERNAME/ytr-downloader-bot/listener.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

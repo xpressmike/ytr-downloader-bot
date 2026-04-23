@@ -1,0 +1,21 @@
+# Template: replace USERNAME with your system user before installing.
+# Quick way (uses your current login):
+#   sed "s|USERNAME|$USER|g" whisper-worker.service | sudo tee /etc/systemd/system/whisper-worker.service
+
+[Unit]
+Description=Whisper Transcribe Worker (faster-whisper daemon, model preloaded)
+After=network.target
+
+[Service]
+Type=simple
+User=USERNAME
+WorkingDirectory=/home/USERNAME/ytr-downloader-bot
+Environment="PATH=/home/USERNAME/ytr-downloader-bot/.venv/bin:/home/USERNAME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="WHISPER_MODEL=tiny"
+Environment="WHISPER_SOCKET=/tmp/whisper.sock"
+ExecStart=/home/USERNAME/ytr-downloader-bot/.venv/bin/python /home/USERNAME/ytr-downloader-bot/scripts/transcribe_worker.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
